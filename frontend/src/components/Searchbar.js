@@ -6,7 +6,7 @@ import './Searchbar.css';
 
 const Searchbar = () => {
     const [dropdownList, setDropdownList] = useState([]);
-    const {search, notificationMessage} = useSearch();
+    const {search, notificationMessage, setNotificationMessage} = useSearch();
 
     useEffect(() => {
         searchService.getDropdownData()
@@ -22,6 +22,11 @@ const Searchbar = () => {
         event.preventDefault();
         const formData = new FormData(event.target);
         const searchQuery = Object.fromEntries(formData);
+
+        if (searchQuery['maxPrice']<0) {
+            setNotificationMessage('Please input valid number.');
+            return;
+        }
 
         search(searchQuery['districtNumber'],
             searchQuery['maxPrice'],
