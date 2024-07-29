@@ -1,0 +1,156 @@
+.review-container {
+font-family: Arial, sans-serif;
+max-width: 800px;
+margin: 0 auto;
+padding: 20px;
+}
+
+.profile-picture {
+font-size: 30px;
+color: #dadce0;
+margin-right: 10px;
+}
+
+.average-rating {
+display: flex;
+align-items: center;
+margin-bottom: 20px;
+}
+
+.average-rating h2 {
+margin-right: 15px;
+font-size: 18px;
+font-weight: 500;
+}
+
+.average-rating-stars {
+display: flex;
+align-items: left;
+margin-right: 0;
+margin-left: auto;
+padding-left: 20px;
+}
+
+.average-rating-number {
+font-size: 24px;
+font-weight: bold;
+color: #5f6368;
+}
+
+.total-reviews-number {
+font-size: 14px;
+padding-left: 10px;
+color: #5f6368;
+}
+
+.rating-stars {
+display: flex;
+align-items: center;
+margin-right: 10px;
+}
+
+.star {
+color: #e7e7e7;
+font-size: 18px;
+}
+
+.star.filled {
+color: #fabb05;
+}
+
+.rating-number {
+font-size: 14px;
+font-weight: bold;
+color: #5f6368;
+}
+
+.reviews-list {
+border-top: 1px solid #dadce0;
+padding-top: 20px;
+}
+
+.review-item {
+margin-bottom: 20px;
+padding-bottom: 20px;
+border-bottom: 1px solid #dadce0;
+}
+
+.review-header {
+display: flex;
+justify-content: space-between;
+align-items: center;
+margin-bottom: 10px;
+}
+
+.reviewer-name {
+font-weight: bold;
+font-size: 20px;
+color: #3c4043;
+}
+
+.review-date {
+display: block;
+font-size: 14px;
+padding-left: 10px;
+color: #5f6368;
+clear:both;
+margin-left: 0;
+margin-right: auto;
+}
+
+.review-stars {
+display: flex;
+
+}
+
+.review-stars .star {
+font-size: 14px;
+}
+
+.review-text {
+color: #3c4043;
+font-size: 14px;
+line-height: 1.5;
+margin: 0;
+text-align: left;
+}
+
+.pagination-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 20px 0;
+    font-family: Arial, sans-serif;
+  }
+
+.pagination-button {
+margin: 0 5px;
+padding: 8px 12px;
+border: 1px solid #ddd;
+background-color: white;
+color: #333;
+font-size: 14px;
+cursor: pointer;
+border-radius: 4px;
+transition: all 0.3s ease;
+}
+
+.pagination-button:hover {
+background-color: #f0f0f0;
+}
+
+.pagination-button:disabled {
+cursor: not-allowed;
+opacity: 0.5;
+}
+
+.pagination-button.active {
+background-color: #007bff;
+color: white;
+border-color: #007bff;
+}
+
+.pagination-ellipsis {
+margin: 0 5px;
+color: #333;
+}

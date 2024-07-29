@@ -33,7 +33,7 @@
     border-style: solid;
   border-radius: 5px;
 }
-.searchbar button{
+.search-button{
     background-color: darkseagreen;
     color:black;
     padding: 10px 20px;
@@ -42,7 +42,7 @@
     cursor: pointer;
     font-size: 16px;
   }
-  .estimated-price {
+  .estimator-infobox {
     margin-top: 20px;
     padding: 20px;
     border-radius: 5px;
@@ -54,12 +54,12 @@
     color: #333;
   }
   
-  .estimated-price h3 {
+  .estimator-infobox h3 {
     margin: 0;
     font-size: 16px;
   }
   
-  .estimated-price p {
+  .estimator-infobox p {
     margin: 10px 0 0;
     font-size: 24px;
   }

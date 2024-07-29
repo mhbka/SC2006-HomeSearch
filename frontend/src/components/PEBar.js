@@ -2,16 +2,20 @@ import React, { useState,useEffect} from 'react';
 import './PEBar.css';
 import searchService from '../services/searchService'; //for district list
 import priceEstimatorService from '../services/priceEstimatorService';
+import townReviewService from '../services/townReviewService';
+import TownReviewsComponent from './PETownReviews';
+import WriteTownReviewComponent from './PEWriteTownReview';
 
 
 const PriEsBar = () => {
+    const [district, setDistrict] = useState();
     const [districtList, setDistrictList] = useState([]);
     const [propertyTypeList, setPropertyTypeList] = useState([]);
     const [townStats, setTownStats] = useState();
     const [price, setPrice] = useState('-');
-
-    const [townReviews, setTownReviews] = useState([]);
-    const [townAverageRating, setAverageRating] = useState();
+    
+    const [townReviewsData, setTownReviewsData] = useState({});
+    const [townReviewPage, setTownReviewPage] = useState(1);
 
     //gets and sets dropdown list (for districts)
     useEffect(() => {
@@ -28,13 +32,20 @@ const PriEsBar = () => {
             setPropertyTypeList(response.data); 
         });
     }, [])
+
+    //paginates if the review page number is changed
+    useEffect(() => {
+        getReviews(district, townReviewPage);
+    }, [townReviewPage]);
    
     //submits the estimator query
     const submitQuery = (event) => { 
         event.preventDefault();
         const formData = new FormData(event.target);
         const searchQuery = Object.fromEntries(formData);
-        console.log(searchQuery);
+
+        //sets the district
+        setDistrict(searchQuery['district']);
 
         //gets the price
         priceEstimatorService.getEstimatePrice(
@@ -42,28 +53,32 @@ const PriEsBar = () => {
             searchQuery['property'],
             searchQuery['publicprivate'],
         )
-        .then(response => setPrice(response.data['Estimated house price']))
-        .catch(error => {
-            if (error.response.status==404) setPrice('No data found for this criteria.');
-            }) 
+            .then(response => setPrice(response.data['Estimated house price']))
+            .catch(error => {
+                if (error.response.status==404) setPrice("-1");
+                }) 
 
         //gets town data
         priceEstimatorService.getTownStatistics(searchQuery['district'])
-        .then(response => setTownStats(response.data[0]));
-
+            .then(response => setTownStats(response.data[0]));
+                
         //gets the town reviews
-        priceEstimatorService.getTownReviews(searchQuery['district'])
-        .then(response => {
-            if (response.data) {
-                setAverageRating(response.data["averageRating"]);
-                setTownReviews(response.data["data"]);
-            } 
-        });
+        getReviews(searchQuery['district'], 1);
     }
-        
+    
+    // Separate function, so it can be passed as a prop to review-writing component,
+    // and called when a new review is submitted.
+    const getReviews = (districtNumber, page) => {
+        console.log("meow")
+        townReviewService.getTownReviews(districtNumber, page)
+            .then(response => {
+                if (response.data) {
+                    setTownReviewsData(response.data);
+                } 
+            });
+    }
     
     return(
-        
         <>
         <div className="floaty">
             <div className='price-estimate-container'>
@@ -99,20 +114,24 @@ const PriEsBar = () => {
                 </select>
                 </div>
 
-                <button type="submit"  className="button">Search</button>
+                <button type="submit" className="search-button">Search</button>
             </form>
             </div>
         
-            <div className="estimated-price (SGD):">
-                <h3>Estimated Price:</h3>
-            <p>{parseFloat(price)==NaN && '$'}{price ? parseInt(price) : '-'}</p>
-            </div>
+            {
+                townStats ? (
+                    <div className="estimator-infobox">
+                    <h3>Estimated Price</h3>
+                    <p>{price!=="-1" ? `$${parseFloat(price).toFixed(2)}` : 'No estimated price for these parameters!'}</p>
+                    </div>
+                ) : <></>
+            }
+                
 
             {
                 townStats ? (
-                    <div className="estimated-price">
+                    <div className="estimator-infobox">
                         <h3>District Statistics</h3>
-                        <p>Location: {townStats.generalLocation}</p>
                         <p>Average Private Price: ${townStats.averagePricePvt ? townStats.averagePricePvt : '-'}</p>
                         <p>Average Public Price: ${townStats.averagePricePublic ? townStats.averagePricePublic : '-'}</p>
                         <p>Average Overall Price: ${townStats.averagePriceAll ? townStats.averagePriceAll : '-'}</p>
@@ -120,17 +139,13 @@ const PriEsBar = () => {
                 ) : <></>
             }
 
-            {
+            {   
                 townStats ? (
-                    <div className="district-reviews">
-                        <h3>District Reviews (Average: {townAverageRating})</h3>
-                        {townReviews.map((review, index) => (
-                            <div key={index} className="bg-gray-100 p-2 mb-2 rounded">
-                            <p>{review.rating}</p>
-                            <p>{review.reviewText}</p>
-                            </div>
-                        ))}
-                    </div>
+                <div className="estimator-infobox">
+                    <h3>District Reviews</h3>
+                    <WriteTownReviewComponent districtNumber={district} refreshReviews={(page) => getReviews(district, page)} />
+                    <TownReviewsComponent townReviewsData={townReviewsData} townReviewPage={townReviewPage} setTownReviewPage={setTownReviewPage} />
+                </div>
                 ) : <></>
             }
 

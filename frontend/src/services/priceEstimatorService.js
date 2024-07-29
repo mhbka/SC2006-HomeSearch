@@ -1,7 +1,7 @@
 import axios from 'axios';
 import tokenAndHeaderPrep from './tokenAndHeaderPrep';
 const baseUrl = '/homesearch/v1/estimator';
-const reviewBaseUrl = '/homesearch/v1/reviews';
+const reviewBaseUrl = '/homesearch/v1/townreviews';
 
 const getEstimatePrice = (districtNumber, propertyType, publicOrPrivate) => {
     const params = {
@@ -38,16 +38,9 @@ const getTownStatistics = (districtNumber) => {
       });
 }
 
-//gets reviews for that town
-const getTownReviews = (districtNumber) => {
-    return axios.get(`${reviewBaseUrl}/${districtNumber}`, {
-        headers: tokenAndHeaderPrep.getAuthHeaders()
-      });
-}
-
 export default {
     getEstimatePrice,
     getPropertyTypeList,
     getPricesByDistrict,
-    getTownStatistics
+    getTownStatistics,
 }
