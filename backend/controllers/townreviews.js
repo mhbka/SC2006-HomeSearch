@@ -5,11 +5,19 @@ const TownReviews = require('../models/TownReviews');
 const TownReviewsStats = require('../models/TownReviewsStats');
 const User = require("../models/User");
 
-exports.getDistrictReviews = async(req, res, next) => {
-    const districtNumber = req.params.districtNumber;
+const REVIEW_PAGE_LIMIT = 5;
 
+exports.getDistrictReviews = async(req, res, next) => {
     try {
-        const reviewData = await TownReviews.find({districtNumber: districtNumber});
+        const districtNumber = req.params.districtNumber;
+
+        const paginationOptions = {
+            page: req.query.page ? req.query.page : 1,
+            limit: REVIEW_PAGE_LIMIT,
+            sort: '-createdAt'
+        };
+
+        const paginatedReviewData = await TownReviews.paginate({districtNumber}, paginationOptions);
         let townStatsData = await TownReviewsStats.findOne({districtNumber: districtNumber});
 
         if (!townStatsData) {
@@ -27,8 +35,10 @@ exports.getDistrictReviews = async(req, res, next) => {
         }
 
         res.json({
-            averageRating: averageRating,
-            data: reviewData
+            totalPages: paginatedReviewData.totalPages,
+            averageRating: parseFloat(averageRating.toFixed(1)),
+            totalReviews: townStatsData.totalReviews,
+            data: paginatedReviewData.docs
         });
     }
     catch (error) {
@@ -54,10 +64,10 @@ exports.postDistrictReview = async(req, res, next) => {
         rating = Math.floor(rating);
 
         // Obtain user and post a new review to DB
-        const user = await User.findById(req.user.id);
+        // const user = await User.findById(req.user.id);
         const review = new TownReviews({
             districtNumber: districtNumber,
-            userName: user.name,
+            user: req.user.id,
             rating: rating,
             reviewText: reviewText,
         });
