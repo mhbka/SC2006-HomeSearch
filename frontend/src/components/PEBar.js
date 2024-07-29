@@ -10,6 +10,9 @@ const PriEsBar = () => {
     const [townStats, setTownStats] = useState();
     const [price, setPrice] = useState('-');
 
+    const [townReviews, setTownReviews] = useState([]);
+    const [townAverageRating, setAverageRating] = useState();
+
     //gets and sets dropdown list (for districts)
     useEffect(() => {
         searchService.getDropdownData()
@@ -47,7 +50,16 @@ const PriEsBar = () => {
         //gets town data
         priceEstimatorService.getTownStatistics(searchQuery['district'])
         .then(response => setTownStats(response.data[0]));
-        }
+
+        //gets the town reviews
+        priceEstimatorService.getTownReviews(searchQuery['district'])
+        .then(response => {
+            if (response.data) {
+                setAverageRating(response.data["averageRating"]);
+                setTownReviews(response.data["data"]);
+            } 
+        });
+    }
         
     
     return(
@@ -96,15 +108,31 @@ const PriEsBar = () => {
             <p>{parseFloat(price)==NaN && '$'}{price ? parseInt(price) : '-'}</p>
             </div>
 
-            {townStats ? (
-                <div className="estimated-price">
-                    <h3>District Statistics</h3>
-                    <p>Location: {townStats.generalLocation}</p>
-                    <p>Average Private Price: ${townStats.averagePricePvt ? townStats.averagePricePvt : '-'}</p>
-                    <p>Average Public Price: ${townStats.averagePricePublic ? townStats.averagePricePublic : '-'}</p>
-                    <p>Average Overall Price: ${townStats.averagePriceAll ? townStats.averagePriceAll : '-'}</p>
-                </div>
-            ) : <></>}
+            {
+                townStats ? (
+                    <div className="estimated-price">
+                        <h3>District Statistics</h3>
+                        <p>Location: {townStats.generalLocation}</p>
+                        <p>Average Private Price: ${townStats.averagePricePvt ? townStats.averagePricePvt : '-'}</p>
+                        <p>Average Public Price: ${townStats.averagePricePublic ? townStats.averagePricePublic : '-'}</p>
+                        <p>Average Overall Price: ${townStats.averagePriceAll ? townStats.averagePriceAll : '-'}</p>
+                    </div>
+                ) : <></>
+            }
+
+            {
+                townStats ? (
+                    <div className="district-reviews">
+                        <h3>District Reviews (Average: {townAverageRating})</h3>
+                        {townReviews.map((review, index) => (
+                            <div key={index} className="bg-gray-100 p-2 mb-2 rounded">
+                            <p>{review.rating}</p>
+                            <p>{review.reviewText}</p>
+                            </div>
+                        ))}
+                    </div>
+                ) : <></>
+            }
 
         </div>
         </div>

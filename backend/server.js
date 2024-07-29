@@ -21,11 +21,10 @@ connectDB();
 
 // Router files
 const auth = require("./routes/auth");
-
-
 const search = require("./routes/search");
 const watchlist = require("./routes/watchlist");
 const priceestimator = require("./routes/priceestimator");
+const townreviews = require("./routes/townreviews");
 
 
 
@@ -87,8 +86,9 @@ app.use((req, res, next) => {
 
 app.use("/homesearch/v1/auth", auth);
 app.use("/homesearch/v1/watchlist", watchlist);
-app.use("/homesearch/v1/search",search);
-app.use("/homesearch/v1/estimator",priceestimator);
+app.use("/homesearch/v1/search", search);
+app.use("/homesearch/v1/estimator", priceestimator);
+app.use("/homesearch/v1/townreviews", townreviews);
 
 
 // Error Handler
@@ -107,7 +107,7 @@ const server = app.listen(
 
 // handle unhandled promise rejections
 process.on("unhandledRejection", (err, promise) => {
-  console.log(`Error: ${err.message}`.red);
+  console.log(`THE FOLLOWING ERROR WAS NOT HANDLED: ${err}`.red);
   // close server & exit process
   server.close(() => process.exit(1));
 });
